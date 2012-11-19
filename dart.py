@@ -1,9 +1,35 @@
-import os, sys
+import os, sys, locale
 os.system("clear")
 
 LIMIT = 501
 PLAYERNUMBER = 2
+SOUND = True
+
 players = {}
+lang = locale.getdefaultlocale()[0][:2]
+
+langStrings = {
+	"de" : {
+		"player" : "Spieler",
+		"name" : "Name",
+		"points" : "Punkte"
+	},
+	"en" : {
+		"player" : "player",
+		"name" : "name",
+		"points" : "points"
+	}
+}
+
+@property
+def isMacOs():
+	if os.uname()[0] == "Darwin":
+		return True
+	else:
+		return False
+
+def getLangStr(command):
+	return langStrings[lang][command]
 
 class Player(object):
 	def __init__(self, playername, score=None):
@@ -39,7 +65,7 @@ class Player(object):
 
 for pid in range(PLAYERNUMBER):
 	pid = pid+1
-	pname = raw_input("Spieler %s Name: " % pid)
+	pname = raw_input("%s %s %s: " % (getLangStr("player"), pid, getLangStr("name")))
 	players[pid] = Player(playername=pname)
 
 while(True):
@@ -48,6 +74,7 @@ while(True):
 		print "%s: %s\n %s" % (p.name, p.score, p.scorelist)
 
 	for p in players.itervalues():
-		points = raw_input("%s Punkte: " % (p.name))
+		points = raw_input("%s %s: " % (p.name, getLangStr("points")))
 		p.newScore(points)
-		os.system("say '%s %s Punkte'" % (p.name, p.score))
+		if isMacOs and SOUND:
+			os.system("say '%s %s %s'" % (p.name, p.score, getLangStr("points")))
