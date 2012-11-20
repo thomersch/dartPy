@@ -6,7 +6,24 @@ class Player(object):
 		self._initscore = self._score
 
 	def newScore(self, points):
-		points = int(points)
+		# do some input checking and conversion, so the program doesn't crash at strange inputs
+		if points == "":
+			points = 0
+
+		try:
+			points = int(points)
+		except:
+			plist = points.split("+")
+			if len(plist) <= 1:
+				points = 0
+			else:
+				points = 0
+				for p in plist:
+					try:
+						points += int(p)
+					except:
+						points += 0
+
 		if points <= self._score:
 			self._score = self._score-points
 			self._scorelist.append(points)
