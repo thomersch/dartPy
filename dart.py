@@ -18,12 +18,18 @@ class Game():
 			"de" : {
 				"player" : "Spieler",
 				"name" : "Name",
-				"points" : "Punkte"
+				"points" : "Punkte",
+				"finished" : "Spiel beendet.",
+				"won" : "hat gesiegt",
+				"avg" : "Durchschnitt"
 			},
 			"en" : {
-				"Player" : "player",
+				"player" : "Player",
 				"name" : "name",
-				"points" : "points"
+				"points" : "points",
+				"finished" : "The game has been finished.",
+				"won" : "has won",
+				"avg" : "avg."
 			}
 		}
 
@@ -49,21 +55,21 @@ class Game():
 			for p in self.players.itervalues():
 				os.system("clear")
 				for q in self.players.itervalues():
-					print "%s %s\n%s\nAverage: %.2f\n" % (q.name, q.scorelist, q.score, q.average)
+					print "%s %s\n%s\n%s: %.2f\n" % (q.name, q.scorelist, q.score, self.getLangStr("avg"), q.average)
 				if p.score > 0 and p.score < 180:
 					if self.isMacOs and self.sound:
-						os.system("say '%s noch %s Punkte'" % (p.name, p.score))
+						os.system("say '%s %s %s'" % (p.name, p.score, self.getLangStr("points")))
 				if p.score > 0:
-					points = raw_input("%s points: " % (p.name))
+					points = raw_input("%s %s: " % (p.name, self.getLangStr("points")))
 				if p.newScore(points) == 0:
 					if len(self.positions) == 0:
 						if self.isMacOs and self.sound:
-							os.system("say '%s hat gesiegt.'" % (p.name))
+							os.system("say '%s %s.'" % (p.name, self.getLangStr("won")))
 					self.positions.append(p)
 					if len(self.positions) == self.playernumber:
 						self.doPlay = False
 						if self.isMacOs and self.sound:
-							os.system("say 'Spiel beendet.'")
+							os.system("say '%s'" % self.getLangStr("finished"))
 
 if __name__ == "__main__":
 	g = Game()
