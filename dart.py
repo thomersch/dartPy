@@ -1,80 +1,70 @@
 import os, sys, locale
+from player import Player
 os.system("clear")
 
-LIMIT = 501
-PLAYERNUMBER = 2
-SOUND = True
+class Game():
 
-players = {}
-lang = locale.getdefaultlocale()[0][:2]
+	def __init__(self, limit=501, playernumber=2, sound=True):
+		self.limit = limit
+		self.playernumber = playernumber
+		self.sound = sound
 
-langStrings = {
-	"de" : {
-		"player" : "Spieler",
-		"name" : "Name",
-		"points" : "Punkte"
-	},
-	"en" : {
-		"player" : "player",
-		"name" : "name",
-		"points" : "points"
-	}
-}
+		self.players = {}
+		self.positions = []
+		self.doPlay = True
+		self.lang = locale.getdefaultlocale()[0][:2]
 
-@property
-def isMacOs():
-	if os.uname()[0] == "Darwin":
-		return True
-	else:
-		return False
+		self.langStrings = {
+			"de" : {
+				"player" : "Spieler",
+				"name" : "Name",
+				"points" : "Punkte"
+			},
+			"en" : {
+				"Player" : "player",
+				"name" : "name",
+				"points" : "points"
+			}
+		}
 
-def getLangStr(command):
-	return langStrings[lang][command]
-
-class Player(object):
-	def __init__(self, playername, score=None):
-		self._name = playername
-		self._scorelist = []
-		if score == None:
-			self._score = LIMIT
+	@property
+	def isMacOs(self):
+		if os.uname()[0] == "Darwin":
+			return True
 		else:
-			self._score = score
+			return False
 
-	def newScore(self, points):
-		points = int(points)
-		if points <= self._score:
-			self._score = self._score-points
-			self._scorelist.append(points)
-		else:
-			self._scorelist.append(0)
+	def getLangStr(self, command):
+		if not self.lang in self.langStrings:
+			self.lang = "en"
+		return self.langStrings[self.lang][command]
 
-		return self._score
+	def play(self):
+		for pid in range(self.playernumber):
+			pid = pid+1
+			pname = raw_input("%s %s %s: " % (self.getLangStr("player"), pid, self.getLangStr("name")))
+			self.players[pid] = Player(playername=pname, score=self.limit)
 
-	@property
-	def scorelist(self):
-		return self._scorelist
+		while(self.doPlay):
+			for p in self.players.itervalues():
+				os.system("clear")
+				for q in self.players.itervalues():
+					print "%s %s\n%s\nAverage: %.2f\n" % (q.name, q.scorelist, q.score, q.average)
+				if p.score > 0 and p.score < 180:
+					if self.isMacOs and self.sound:
+						os.system("say '%s noch %s Punkte'" % (p.name, p.score))
+				if p.score > 0:
+					points = raw_input("%s points: " % (p.name))
+				if p.newScore(points) == 0:
+					if len(self.positions) == 0:
+						if self.isMacOs and self.sound:
+							os.system("say '%s hat gesiegt.'" % (p.name))
+					self.positions.append(p)
+					if len(self.positions) == self.playernumber:
+						self.doPlay = False
+						if self.isMacOs and self.sound:
+							os.system("say 'Spiel beendet.'")
 
-	@property
-	def name(self):
-		return self._name
-
-	@property
-	def score(self):
-		return self._score
-
-
-for pid in range(PLAYERNUMBER):
-	pid = pid+1
-	pname = raw_input("%s %s %s: " % (getLangStr("player"), pid, getLangStr("name")))
-	players[pid] = Player(playername=pname)
-
-while(True):
-	os.system("clear")
-	for p in players.itervalues():
-		print "%s: %s\n %s" % (p.name, p.score, p.scorelist)
-
-	for p in players.itervalues():
-		points = raw_input("%s %s: " % (p.name, getLangStr("points")))
-		p.newScore(points)
-		if isMacOs and SOUND:
-			os.system("say '%s %s %s'" % (p.name, p.score, getLangStr("points")))
+if __name__ == "__main__":
+	g = Game()
+	g.play()
