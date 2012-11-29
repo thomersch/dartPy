@@ -67,7 +67,7 @@ class Player(object):
 	def writeLog(self, t0, t1):
 		if not os.path.exists("scores"):
 			os.makedirs("scores")
-		filename = "%s_%s.dartlog.txt" % (self.name, t0.strftime("%Y-%m-%d-%H-%M"))
+		filename = "%s_%s.dartlog.json" % (self.name, t0.strftime("%Y-%m-%d-%H-%M"))
 		filepath = os.path.join("scores", filename)
 		data = {
 			"name": self.name,
