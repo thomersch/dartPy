@@ -1,10 +1,11 @@
 import os, sys, locale
+from datetime import datetime
 from player import Player
 os.system("clear")
 
 class Game():
 
-	def __init__(self, limit=501, playernumber=2, sound=True):
+	def __init__(self, limit=501, playernumber=2, sound=True, logging=True):
 		self.limit = limit
 		self.playernumber = playernumber
 		self.sound = sound
@@ -21,7 +22,8 @@ class Game():
 				"points" : "Punkte",
 				"finished" : "Spiel beendet.",
 				"won" : "hat gesiegt",
-				"avg" : "Durchschnitt"
+				"avg" : "Durchschnitt",
+				"manual": "Ergebnis eingeben als Summe oder als Addition (z.B. 60+50+60).\nKorrektur des letzten Wurfes: #Korrektur#aktueller Wurf"
 			},
 			"en" : {
 				"player" : "Player",
@@ -29,7 +31,8 @@ class Game():
 				"points" : "points",
 				"finished" : "The game has been finished.",
 				"won" : "has won",
-				"avg" : "avg."
+				"avg" : "avg.",
+				"manual": "Type score as number or an addition (e.g. 60+50+60).\nEdit your last score: #new Value#current score"
 			}
 		}
 
@@ -52,9 +55,13 @@ class Game():
 			pname = raw_input("%s %s %s: " % (self.getLangStr("player"), pid, self.getLangStr("name")))
 			self.players[pid] = Player(playername=pname, score=self.limit)
 
+		t0 = datetime.now()
+
 		while(self.doPlay):
 			for p in self.players.itervalues():
 				os.system("clear")
+
+				print self.getLangStr("manual") + "\n"
 
 				# print score table
 				for q in self.players.itervalues():
@@ -68,9 +75,10 @@ class Game():
 				# if score is > 0 ask for points
 				if p.score > 0:
 					points = raw_input("%s %s: " % (p.name, self.getLangStr("points")))
+					l = p.newScore(points)
 
 				# has the player reached 0?
-				if p.newScore(points) == 0:
+				if p.score == 0:
 					if len(self.positions) == 0:
 						if self.isMacOs and self.sound:
 							os.system("say '%s %s.'" % (p.name, self.getLangStr("won")))
@@ -80,6 +88,11 @@ class Game():
 						self.doPlay = False
 						if self.isMacOs and self.sound:
 							os.system("say '%s'" % self.getLangStr("finished"))
+
+		t1 = datetime.now()
+
+		for player in self.players.itervalues():
+			player.writeLog(t0, t1)
 
 if __name__ == "__main__":
 	g = Game()
