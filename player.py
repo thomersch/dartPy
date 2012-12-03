@@ -14,7 +14,7 @@ class Player(object):
 			points = 0
 
 		# correction of scores
-		if points.startswith("#"):
+		if points != "" and points.startswith("#"):
 			c = points.split("#")
 			self.correctLastScore(int(c[1]))
 			points = c[2]
