@@ -59,35 +59,36 @@ class Game():
 
 		while(self.doPlay):
 			for p in self.players.itervalues():
-				os.system("clear")
-
-				print self.getLangStr("manual") + "\n"
-
-				# print score table
-				for q in self.players.itervalues():
-					print "%s %s\n%s\n%s: %.2f\n" % (q.name, q.scorelist, q.score, self.getLangStr("avg"), q.average)
-
-				# for low points say the score loudly
-				if p.score > 0 and p.score <= 180:
-					if self.isMacOs and self.sound:
-						os.system("say '%s %s %s'" % (p.name, p.score, self.getLangStr("points")))
-
-				# if score is > 0 ask for points
 				if p.score > 0:
-					points = raw_input("%s %s: " % (p.name, self.getLangStr("points")))
-					l = p.newScore(points)
+					os.system("clear")
 
-				# has the player reached 0?
-				if p.score == 0:
-					if len(self.positions) == 0:
-						if self.isMacOs and self.sound:
-							os.system("say '%s %s.'" % (p.name, self.getLangStr("won")))
+					print self.getLangStr("manual") + "\n"
 
-					self.positions.append(p)
-					if len(self.positions) == self.playernumber:
-						self.doPlay = False
+					# print score table
+					for q in self.players.itervalues():
+						print "%s %s\n%s\n%s: %.2f\n" % (q.name, q.scorelist, q.score, self.getLangStr("avg"), q.average)
+
+					# for low points say the score loudly
+					if p.score > 0 and p.score <= 180:
 						if self.isMacOs and self.sound:
-							os.system("say '%s'" % self.getLangStr("finished"))
+							os.system("say '%s %s %s'" % (p.name, p.score, self.getLangStr("points")))
+
+					# if score is > 0 ask for points
+					if p.score > 0:
+						points = raw_input("%s %s: " % (p.name, self.getLangStr("points")))
+						l = p.newScore(points)
+
+					# has the player reached 0?
+					if p.score == 0:
+						if len(self.positions) == 0:
+							if self.isMacOs and self.sound:
+								os.system("say '%s %s.'" % (p.name, self.getLangStr("won")))
+
+						self.positions.append(p)
+						if len(self.positions) == self.playernumber:
+							self.doPlay = False
+							if self.isMacOs and self.sound:
+								os.system("say '%s'" % self.getLangStr("finished"))
 
 		t1 = datetime.now()
 
