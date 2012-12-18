@@ -85,7 +85,7 @@ class Game():
 								os.system("say '%s %s.'" % (p.name, self.getLangStr("won")))
 
 						self.positions.append(p)
-						if len(self.positions) == self.playernumber:
+						if len(self.positions) == self.playernumber - 1:
 							self.doPlay = False
 							if self.isMacOs and self.sound:
 								os.system("say '%s'" % self.getLangStr("finished"))
